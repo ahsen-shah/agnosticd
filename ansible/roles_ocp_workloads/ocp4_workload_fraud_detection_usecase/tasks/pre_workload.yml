@@ -7,11 +7,18 @@
     state: present
   become: true
 
-- name: Extract dataset into default home dir in remote location
-  ansible.builtin.unarchive:
-    src: "{{ role_path }}/files/creditcard_with_empty_values.tar.gz"
+- name: Get dataset into default home dir in remote location
+  get_url:
+    url: https://gpte-public.s3.amazonaws.com/creditcard_with_empty_values.tar.gz
+    dest: /tmp
+
+- name: Unzip dataset
+  unarchive:
+    src: /tmp/creditcard_with_empty_values.tar.gz
     dest: ./
+    remote_src: true
   register: path
+
 
 - name: Create s3 bucket
   amazon.aws.s3_bucket:
